@@ -24,10 +24,20 @@ class CatalogueLinkExtension extends DataExtension
 
     public function updateRelativeLink(&$link, $action)
     {
-        $link = Controller::join_links(
-            $this->owner->URLSegment,
-            $action
-        );
+        $parent = $this->owner->Parent();
+
+        if ($parent && $parent->exists()) {
+            $link = Controller::join_links(
+                $parent->RelativeLink(),
+                $this->owner->URLSegment,
+                $action
+            ); 
+        } else {
+            $link = Controller::join_links(
+                $this->owner->URLSegment,
+                $action
+            ); 
+        }
     }
 
     /**
