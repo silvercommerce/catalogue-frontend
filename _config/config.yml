@@ -1,15 +1,12 @@
 ---
-Name: catalogueconfig
+Name: cataloguefrontendconfig
 ---
-SiteConfig:
+SilverStripe\Control\Controller:
   extensions:
-    - CatalogueSiteConfigExtension
-Controller:
+    - SilverCommerce\CatalogueFrontend\Extensions\ControllerExtension
+SilverCommerce\CatalogueAdmin\Model\CatalogueProduct:
   extensions:
-    - CatalogueControllerExtension
-Image:
+    - SilverCommerce\CatalogueFrontend\Extensions\CatalogueLinkExtension
+SilverCommerce\CatalogueAdmin\Model\CatalogueCategory:
   extensions:
-    - CatalogueImageExtension
-LeftAndMain:
-  extra_requirements_css:
-    - catalogue/css/admin.css
+    - SilverCommerce\CatalogueFrontend\Extensions\CatalogueLinkExtension

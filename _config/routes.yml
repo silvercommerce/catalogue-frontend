@@ -1,8 +1,7 @@
 ---
-Name: modelascontrollerroutes
+Name: catalogueroutes
 After: cms/routes#modelascontrollerroutes
 ---
 Director:
   rules:
-    '': 'RootURLController'
-    '$URLSegment//$Action/$ID/$OtherID': 'CatalogueURLController'
+    '$URLSegment//$Action/$ID/$OtherID': 'SilverCommerce\CatalogueFrontend\Control\ModelAsController'

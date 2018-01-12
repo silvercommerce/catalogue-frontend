@@ -1,12 +1,19 @@
 <?php
 
+namespace SilverCommerce\CatalogueFrontend\Control;
+
+use SilverStripe\CMS\Controllers\ContentController;
+use SilverStripe\ORM\PaginatedList;
+use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
+
+
 /**
  * Controller used to render pages in the catalogue (either categories or pages)
  *
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class CatalogueCategoryController extends CatalogueController
+class CatalogueController extends ContentController
 {
 
 
@@ -55,18 +62,6 @@ class CatalogueCategoryController extends CatalogueController
         $this->dataRecord = $dataRecord;
         $this->failover = $this->dataRecord;
         parent::__construct();
-    }
-
-    /**
-     * Get a list of templates to call and return a default render with
-     */
-    public function index()
-    {   
-        $this->extend("onBeforeIndex");
-
-        $classes = CatalogueHelper::get_templates_for_class($this->dataRecord->class);
-
-        return $this->renderWith($classes);
     }
     
     /**

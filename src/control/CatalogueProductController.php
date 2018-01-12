@@ -1,5 +1,13 @@
 <?php
 
+
+namespace SilverCommerce\CatalogueFrontend\Control;
+
+use SilverStripe\CMS\Controllers\ContentController;
+use SilverStripe\ORM\PaginatedList;
+use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
+use SilverCommerce\CatalogueFrontend\Traits\TemplateFinder;
+
 /**
  * Controller used to render pages in the catalogue (either categories
  * or pages)
@@ -7,23 +15,13 @@
  * @author i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
-class CatalogueProductController extends CatalogueController
+class CatalogueProductController extends ContentController
 {
-    private static $allowed_actions = array(
-        'iid',
-        'Form'
-    );
+    use TemplateFinder;
 
-    /**
-     * Return the link to this controller, but force the expanded link to be returned so that form methods and
-     * similar will function properly.
-     *
-     * @return string
-     */
-    public function Link($action = null)
-    {
-        return $this->data()->Link(($action ? $action : true));
-    }
+    private static $allowed_actions = [
+        'iid'
+    ];
 
     /**
      * The Controller will take the URLSegment parameter from the URL
@@ -81,7 +79,7 @@ class CatalogueProductController extends CatalogueController
         
         $this->extend("onBeforeIndex");
 
-        $classes = CatalogueHelper::get_templates_for_class($this->dataRecord->class);
+        $classes = $this->getTemplates();
         
         return $this->renderWith($classes);
     }
@@ -97,30 +95,8 @@ class CatalogueProductController extends CatalogueController
         
         $this->extend("onBeforeIID");
         
-        $classes = CatalogueHelper::get_templates_for_class($this->dataRecord->class);
+        $classes = $this->getTemplates();
         
         return $this->renderWith($classes);
-    }
-
-    /**
-     * Create a form to associate with this product, by default it will
-     * be empty, but is intended to be easily extendable to allow "add
-     * item to cart", or "get a quote" functionality.
-     * 
-     * @return Form 
-     */
-    public function Form()
-    {
-        $form = Form::create(
-            $this,
-            "Form",
-            FieldList::create(),
-            FieldList::create(),
-            new RequiredFields(array())
-        );
-        
-        $this->extend("updateForm", $form);
-        
-        return $form;
     }
 }
