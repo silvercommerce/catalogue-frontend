@@ -28,8 +28,6 @@
         "silvercommerce/catalogue-admin": "1.*@dev"
     },
     "suggest": {
-        "silverstripe/cms": "Add full content management support to your site",
-        "i-lateral/silverstripe-siteconfig": "Add site settings support",
         "i-lateral/silverstripe-middleman": "Add CMS vars, such as menu, searchform, etc to your site",
         "i-lateral/silverstripe-users": "Add user account management, login and registration"
     },
