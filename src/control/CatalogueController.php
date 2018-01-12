@@ -6,8 +6,10 @@ use SilverStripe\Control\Director;
 use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\ORM\PaginatedList;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\View\SSViewer;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueProduct;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
+use \Page;
 
 
 /**
@@ -19,6 +21,10 @@ use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
 class CatalogueController extends ContentController
 {
 
+    private static $allowed_actions = [
+        'iid'
+    ];
+    
     /**
      * Get a paginated list of products contained in this category
      *
@@ -62,6 +68,31 @@ class CatalogueController extends ContentController
         }
         
         parent::__construct($dataRecord);
+    }
+
+        /**
+     * The productimage action is used to determine the default image that will
+     * appear related to a product
+     *
+     * @return Image
+     */
+    public function ProductImage()
+    {
+        $image = null;
+        $action = $this->request->param('Action');
+        $id = $this->request->param('ID');
+
+        if ($action && $action === "iid" && $id) {
+            $image = $this->Images()->byID($id);
+        }
+
+        if (!$image) {
+            $image = $this->SortedImages()->first();
+        }
+            
+        $this->extend("updateProductImage", $image);
+
+        return $image;
     }
 
     /**
@@ -147,6 +178,45 @@ class CatalogueController extends ContentController
         }
 
         return $response;
+    }
+
+    /**
+     * Overwrite default SSViewer call to get a custom
+     * template list
+     *
+     * @param $action string
+     * @return SSViewer
+     */
+    public function getViewer($action)
+    {
+        // Manually set templates should be dealt with by Controller::getViewer()
+        if (isset($this->templates[$action]) && $this->templates[$action]
+            || (isset($this->templates['index']) && $this->templates['index'])
+            || $this->template
+        ) {
+            return parent::getViewer($action);
+        }
+
+        // Prepare action for template search
+        if ($action == "index") {
+            $action = "";
+        } else {
+            $action = '_' . $action;
+        }
+
+        $templates = array_merge(
+            // Find templates by dataRecord
+            SSViewer::get_templates_by_class(get_class($this->dataRecord), $action, "SilverStripe\\CMS\\Model\\SiteTree"),
+            // Now get templates for sitetree
+            SSViewer::get_templates_by_class(Page::singleton(), $action, "SilverStripe\\CMS\\Model\\SiteTree"),
+            // Next, we need to add templates for all controllers
+            SSViewer::get_templates_by_class(static::class, $action, "SilverStripe\\Control\\Controller"),
+            // Fail-over to the same for the "index" action
+            SSViewer::get_templates_by_class(get_class($this->dataRecord), "", "SilverStripe\\CMS\\Model\\SiteTree"),
+            SSViewer::get_templates_by_class(static::class, "", "SilverStripe\\Control\\Controller")
+        );
+
+        return SSViewer::create($templates);
     }
     
     /**

@@ -30,6 +30,40 @@ class CatalogueLinkExtension extends DataExtension
         );
     }
 
+    /**
+     * Returns true if this is the currently active page being used to handle this request.
+     *
+     * @return bool
+     */
+    public function isCurrent()
+    {
+        $currentPage = Director::get_current_page();
+
+        if ($currentPage instanceof ContentController) {
+            $currentPage = $currentPage->data();
+        }
+        if ($currentPage instanceof CatalogueCategory || $currentPage instanceof CatalogueProduct) {
+            return $currentPage === $this->owner || $currentPage->ID === $this->owner->ID;
+        }
+        return false;
+    }
+
+    /**
+     * Check if this page is in the currently active section (e.g. it is either current or one of its children is
+     * currently being viewed).
+     *
+     * @return bool
+     */
+    public function isSection()
+    {
+        $is_curr = $this->isCurrent();
+        $curr = Director::get_current_page();
+
+        return $is_curr || (
+            ($curr instanceof CatalogueCategory || $curr instanceof CatalogueProduct) && in_array($this->owner->ID, $curr->getAncestors()->column())
+        );
+    }
+
     public function updateCMSFields(FieldList $fields)
     {
         $parent = null;
