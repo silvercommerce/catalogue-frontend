@@ -1,0 +1,6 @@
+---
+Name: catalogueinjector
+---
+SilverStripe\Core\Injector\Injector:
+  SilverStripe\CMS\Controllers\ModelAsController:
+    class: SilverCommerce\CatalogueFrontend\Control\ModelAsController
