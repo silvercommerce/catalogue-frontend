@@ -20,10 +20,6 @@ use \Page;
  */
 class CatalogueController extends ContentController
 {
-
-    private static $allowed_actions = [
-        'iid'
-    ];
     
     /**
      * Get a paginated list of products contained in this category
@@ -78,17 +74,7 @@ class CatalogueController extends ContentController
      */
     public function ProductImage()
     {
-        $image = null;
-        $action = $this->request->param('Action');
-        $id = $this->request->param('ID');
-
-        if ($action && $action === "iid" && $id) {
-            $image = $this->Images()->byID($id);
-        }
-
-        if (!$image) {
-            $image = $this->SortedImages()->first();
-        }
+        $image = $this->SortedImages()->first();
             
         $this->extend("updateProductImage", $image);
 
