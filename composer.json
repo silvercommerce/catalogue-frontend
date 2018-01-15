@@ -31,11 +31,6 @@
         "i-lateral/silverstripe-middleman": "Add CMS vars, such as menu, searchform, etc to your site",
         "i-lateral/silverstripe-users": "Add user account management, login and registration"
     },
-    "extra": {
-        "expose": [
-            "client/dist"
-        ]
-    },
     "autoload": {
         "psr-4": {
             "SilverCommerce\\CatalogueFrontend\\": "src/"
