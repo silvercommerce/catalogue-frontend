@@ -10,3 +10,10 @@ SilverCommerce\CatalogueAdmin\Model\CatalogueProduct:
 SilverCommerce\CatalogueAdmin\Model\CatalogueCategory:
   extensions:
     - SilverCommerce\CatalogueFrontend\Extensions\CatalogueLinkExtension
+---
+Only:
+  moduleexists: 'silvercommerce/shoppingcart'
+---
+SilverCommerce\CatalogueFrontend\Control\CatalogueController:
+  extensions:
+    - SilverCommerce\CatalogueFrontend\Extensions\AddToCartExtension
