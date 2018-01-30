@@ -25,7 +25,8 @@
         "silverstripe/framework": "~4.0",
         "silverstripe/cms": "~4.0",
         "silverstripe/assets": "~1.0",
-        "silvercommerce/catalogue-admin": "1.*@dev"
+        "silvercommerce/catalogue-admin": "1.*@dev",
+        "silvercommerce/quantityfield": "~1.0"
     },
     "suggest": {
         "i-lateral/silverstripe-middleman": "Add CMS vars, such as menu, searchform, etc to your site",

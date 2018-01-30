@@ -12,6 +12,7 @@ use SilverStripe\Forms\RequiredFields;
 use SilverStripe\ORM\ValidationResult;
 use SilverCommerce\ShoppingCart\Control\ShoppingCart;
 use SilverCommerce\OrdersAdmin\Model\LineItem;
+use SilverCommerce\QuantityField\Forms\QuantityField;
 
 /**
  * Add an add to cart form that generates a {@link LineItem} for
@@ -37,8 +38,7 @@ class AddToCartExtension extends Extension
                     ->setValue($object->ID),
                 HiddenField::create('ClassName')
                     ->setValue($object->ClassName),
-                NumericField::create('Quantity', _t('Catalogue.Qty','Qty'))
-                    ->setValue('1')
+                QuantityField::create('Quantity', _t('Catalogue.Qty','Qty'))
                     ->addExtraClass('checkout-additem-quantity')
             ),
             FieldList::create(
