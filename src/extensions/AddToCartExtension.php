@@ -14,6 +14,7 @@ use SilverStripe\Forms\RequiredFields;
 use SilverCommerce\OrdersAdmin\Model\LineItem;
 use SilverCommerce\ShoppingCart\Control\ShoppingCart;
 use SilverCommerce\QuantityField\Forms\QuantityField;
+use SilverCommerce\ShoppingCart\Forms\AddToCartForm;
 
 /**
  * Add an add to cart form that generates a {@link LineItem} for
@@ -32,88 +33,16 @@ class AddToCartExtension extends Extension
     {
         $object = $this->owner->dataRecord;
 
-        $form = Form::create(
+        $form = AddToCartForm::create(
             $this->owner,
-            "AddToCartForm",
-            FieldList::create(
-                HiddenField::create('ID')
-                    ->setValue($object->ID),
-                HiddenField::create('ClassName')
-                    ->setValue($object->ClassName),
-                QuantityField::create('Quantity', _t('Catalogue.Qty','Qty'))
-                    ->addExtraClass('checkout-additem-quantity')
-            ),
-            FieldList::create(
-                FormAction::create(
-                    'doAddItemToCart',
-                    _t('Catalogue.AddToCart','Add to Cart')
-                )->addExtraClass('btn btn-primary')
-            ),
-            RequiredFields::create(["Quantity"])
+            "AddToCartForm"
         );
 
-        $this->owner->extend("updateAddToCartForm", $form);
+        $form
+            ->setProductClass($object->ClassName)
+            ->setProductID($object->ID);
 
         return $form;
-    }
-
-    public function doAddItemToCart($data, $form)
-    {
-        $classname = $data["ClassName"];
-        $id = $data["ID"];
-        $cart = ShoppingCart::get();
-        $item_class = Config::inst()
-            ->get(ShoppingCart::class, "item_class");
-
-        if ($object = $classname::get()->byID($id)) {
-            if (method_exists($object, "getTaxFromCategory")) {
-                $tax_rate = $object->getTaxFromCategory();
-            } else {
-                $tax_rate = null;
-            }
-
-            $deliverable = (isset($object->Deliverable)) ? $object->Deliverable : true;
-            
-            $item_to_add = $item_class::create([
-                "Title" => $object->Title,
-                "Content" => $object->Content,
-                "Price" => $object->Price,
-                "Quantity" => $data['Quantity'],
-                "StockID" => $object->StockID,
-                "Weight" => $object->Weight,
-                "ProductClass" => $object->ClassName,
-                "Stocked" => $object->Stocked,
-                "Deliverable" => $deliverable,
-                "TaxRateID" => $tax_rate,
-            ]);
-
-            // Try and add item to cart, return any exceptions raised
-            // as a message
-            try {
-                $cart->add($item_to_add);
-                
-                $message = _t(
-                    'Catalogue.AddedItemToCart',
-                    'Added "{item}" to your shopping cart',
-                    ["item" => $object->Title]
-                );
-
-                $form->sessionMessage(
-                    $message,
-                    ValidationResult::TYPE_GOOD
-                );
-            } catch(Exception $e) {
-                $form->sessionMessage(
-                    $e->getMessage()
-                );
-            }
-        } else {
-            $form->sessionMessage(
-                _t("Catalogue.ErrorAddingToCart", "Error adding item to cart")
-            );
-        }
-
-        return $this->owner->redirectBack();
     }
 
 }
