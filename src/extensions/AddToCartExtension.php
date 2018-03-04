@@ -2,16 +2,17 @@
 
 namespace SilverCommerce\CatalogueFrontend\Extensions;
 
-use SilverStripe\Core\Extension;
 use SilverStripe\Forms\Form;
+use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\HiddenField;
-use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\FormAction;
-use SilverStripe\Forms\RequiredFields;
+use SilverStripe\Forms\HiddenField;
+use SilverStripe\Core\Config\Config;
+use SilverStripe\Forms\NumericField;
 use SilverStripe\ORM\ValidationResult;
-use SilverCommerce\ShoppingCart\Control\ShoppingCart;
+use SilverStripe\Forms\RequiredFields;
 use SilverCommerce\OrdersAdmin\Model\LineItem;
+use SilverCommerce\ShoppingCart\Control\ShoppingCart;
 use SilverCommerce\QuantityField\Forms\QuantityField;
 
 /**
@@ -59,6 +60,7 @@ class AddToCartExtension extends Extension
         $classname = $data["ClassName"];
         $id = $data["ID"];
         $cart = ShoppingCart::get();
+        $item_class = Config::inst()->get(ShoppingCart::class, "item_class");
 
         if($object = $classname::get()->byID($id)) {
             if (method_exists($object, "getTaxFromCategory")) {
@@ -69,11 +71,11 @@ class AddToCartExtension extends Extension
 
             $deliverable = (isset($object->Deliverable)) ? $object->Deliverable : true;
             
-            $item_to_add = LineItem::create([
+            $item_to_add = $item_class::create([
                 "Title" => $object->Title,
                 "Content" => $object->Content,
                 "Price" => $object->Price,
-                "Quantiy" => $data['Quantity'],
+                "Quantity" => $data['Quantity'],
                 "StockID" => $object->StockID,
                 "Weight" => $object->Weight,
                 "ProductClass" => $object->ClassName,
