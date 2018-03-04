@@ -28,7 +28,8 @@ class AddToCartExtension extends Extension
         "AddToCartForm"
     ];
     
-    public function AddToCartForm() {
+    public function AddToCartForm()
+    {
         $object = $this->owner->dataRecord;
 
         $form = Form::create(
@@ -56,13 +57,15 @@ class AddToCartExtension extends Extension
         return $form;
     }
 
-    public function doAddItemToCart($data, $form) {
+    public function doAddItemToCart($data, $form)
+    {
         $classname = $data["ClassName"];
         $id = $data["ID"];
         $cart = ShoppingCart::get();
-        $item_class = Config::inst()->get(ShoppingCart::class, "item_class");
+        $item_class = Config::inst()
+            ->get(ShoppingCart::class, "item_class");
 
-        if($object = $classname::get()->byID($id)) {
+        if ($object = $classname::get()->byID($id)) {
             if (method_exists($object, "getTaxFromCategory")) {
                 $tax_rate = $object->getTaxFromCategory();
             } else {
@@ -98,10 +101,6 @@ class AddToCartExtension extends Extension
                 $form->sessionMessage(
                     $message,
                     ValidationResult::TYPE_GOOD
-                );
-            } catch(ValidationException $e) {
-                $form->sessionMessage(
-                    $e->getMessage()
                 );
             } catch(Exception $e) {
                 $form->sessionMessage(
