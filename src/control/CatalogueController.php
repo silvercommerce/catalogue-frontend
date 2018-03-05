@@ -20,6 +20,25 @@ use \Page;
  */
 class CatalogueController extends ContentController
 {
+
+    /**
+     * Find a filter from the URL that we can apply to the products list
+     * 
+     * @return array
+     */
+    public function getFilter()
+    {
+        $filter = [];
+        $tag = $this->getRequest()->getVar("t");
+
+        if ($tag) {
+            $filter["Tags.URLSegment"] = $tag;
+        }
+
+        $this->extend("updateFilter", $filter);
+
+        return $filter;
+    }
     
     /**
      * Get a paginated list of products contained in this category
@@ -28,9 +47,15 @@ class CatalogueController extends ContentController
      */
     public function PaginatedProducts($limit = 10)
     {
+        $products = $this->SortedProducts();
+        $filter = $this->getFilter();
+
+        if (count($filter)) {
+            $products = $products->filter($filter);
+        }
         return PaginatedList::create(
-            $this->SortedProducts(),
-            $this->request
+            $filter,
+            $this->getRequest()
         )->setPageLength($limit);
     }
 
@@ -42,9 +67,16 @@ class CatalogueController extends ContentController
      */
     public function PaginatedAllProducts($limit = 10)
     {
+        $products = $this->AllProducts();
+        $filter = $this->getFilter();
+
+        if (count($filter)) {
+            $products = $products->filter($filter);
+        }
+
         return PaginatedList::create(
-            $this->AllProducts(),
-            $this->request
+            $products,
+            $this->getRequest()
         )->setPageLength($limit);
     }
 

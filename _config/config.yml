@@ -10,6 +10,9 @@ SilverCommerce\CatalogueAdmin\Model\CatalogueProduct:
 SilverCommerce\CatalogueAdmin\Model\CatalogueCategory:
   extensions:
     - SilverCommerce\CatalogueFrontend\Extensions\CatalogueLinkExtension
+SilverCommerce\CatalogueAdmin\Model\ProductTag:
+  extensions:
+    - SilverCommerce\CatalogueFrontend\Extensions\ProductTagExtension
 ---
 Only:
   moduleexists: 'silvercommerce/shoppingcart'
