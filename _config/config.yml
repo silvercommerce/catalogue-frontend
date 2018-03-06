@@ -10,6 +10,7 @@ SilverCommerce\CatalogueAdmin\Model\CatalogueProduct:
 SilverCommerce\CatalogueAdmin\Model\CatalogueCategory:
   extensions:
     - SilverCommerce\CatalogueFrontend\Extensions\CatalogueLinkExtension
+    - SilverCommerce\CatalogueFrontend\Extensions\CategoryExtension
 SilverCommerce\CatalogueAdmin\Model\ProductTag:
   extensions:
     - SilverCommerce\CatalogueFrontend\Extensions\ProductTagExtension
