@@ -26,6 +26,7 @@
         "silverstripe/cms": "~4.0",
         "silverstripe/assets": "~1.0",
         "silvercommerce/catalogue-admin": "1.*@dev",
+        "silvercommerce/settings": "~1.0",
         "silvercommerce/quantityfield": "~1.0"
     },
     "suggest": {
