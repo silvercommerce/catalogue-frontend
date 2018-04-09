@@ -20,6 +20,7 @@ class ControllerExtension extends Extension
      * from a sub level
      *
      * @param Parent the ID of a parent cetegory
+     *
      * @return SS_List
      */
     public function CatalogueCategories($ParentID = 0)
@@ -29,6 +30,25 @@ class ControllerExtension extends Extension
                 "ParentID" => $ParentID,
                 "Disabled" => 0
             ]);
+    }
+
+    /**
+     * Generate a list of categories that can be used in menus
+     * (this means that) categories are checked for their
+     * can view state before being returned
+     * 
+     * @param Parent the ID of a parent cetegory
+     *
+     * @return SS_List
+     */
+    public function CatalogueMenu($ParentID = 0)
+    {
+        return $this
+            ->owner
+            ->CatalogueCategories()
+            ->filterByCallback(function($item, $list) {
+                return $item->canView();
+            });
     }
 
     /**
