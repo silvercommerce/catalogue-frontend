@@ -73,6 +73,16 @@ class CatalogueLinkExtension extends DataExtension
             ($curr instanceof CatalogueCategory || $curr instanceof CatalogueProduct) && in_array($this->owner->ID, $curr->getAncestors()->column())
         );
     }
+    
+    /**
+     * Return "link" or "section" depending on if this is the current section.
+     *
+     * @return string
+     */
+    public function LinkOrSection()
+    {
+        return $this->isSection() ? 'section' : 'link';
+    }
 
     public function updateCMSFields(FieldList $fields)
     {
