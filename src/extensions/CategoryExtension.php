@@ -21,6 +21,10 @@ class CategoryExtension extends DataExtension
         "Image" => Image::class
     ];
 
+    private static $owns = [
+        "Image"
+    ];
+
     /**
      * Gets the main image to use for this category, this
      * can either be the selected image, an image from the
