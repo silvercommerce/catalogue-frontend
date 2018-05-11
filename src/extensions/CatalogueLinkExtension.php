@@ -74,6 +74,34 @@ class CatalogueLinkExtension extends DataExtension
         );
     }
 
+
+    /**
+     * Return "link", "current" or section depending on if this page is the current page, or not on the current page but
+     * in the current section.
+     *
+     * @return string
+     */
+    public function LinkingMode()
+    {
+        if ($this->isCurrent()) {
+            return 'current';
+        } elseif ($this->isSection()) {
+            return 'section';
+        } else {
+            return 'link';
+        }
+    }
+
+    /**
+     * Return "link" or "section" depending on if this is the current section.
+     *
+     * @return string
+     */
+    public function LinkOrSection()
+    {
+        return $this->isSection() ? 'section' : 'link';
+    }
+
     public function updateCMSFields(FieldList $fields)
     {
         $parent = null;
