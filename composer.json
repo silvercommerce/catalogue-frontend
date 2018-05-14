@@ -30,8 +30,8 @@
         "silvercommerce/quantityfield": "~1.0"
     },
     "suggest": {
-        "i-lateral/silverstripe-middleman": "Add CMS vars, such as menu, searchform, etc to your site",
-        "i-lateral/silverstripe-users": "Add user account management, login and registration"
+        "i-lateral/silverstripe-users": "Add user account management, login and registration",
+        "wilr/silverstripe-googlesitemaps": "SilverStripe support for the Google Sitemaps XML"
     },
     "autoload": {
         "psr-4": {
