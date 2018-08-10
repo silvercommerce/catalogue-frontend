@@ -98,6 +98,24 @@ class CatalogueController extends ContentController
         parent::__construct($dataRecord);
     }
 
+    protected function init()
+    {
+        parent::init();
+
+        # Check for subsites and add support
+        if (class_exists(Subsite::class)) {
+            $subsite = Subsite::currentSubsite();
+
+            if ($subsite && $subsite->Theme) {
+                SSViewer::add_themes([$subsite->Theme]);
+            }
+
+            if ($subsite && i18n::getData()->validate($subsite->Language)) {
+                i18n::set_locale($subsite->Language);
+            }
+        }
+    }
+
         /**
      * The productimage action is used to determine the default image that will
      * appear related to a product
