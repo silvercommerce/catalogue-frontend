@@ -2,14 +2,16 @@
 
 namespace SilverCommerce\CatalogueFrontend\Control;
 
+use \Page;
+use SilverStripe\i18n\i18n;
+use SilverStripe\View\SSViewer;
 use SilverStripe\Control\Director;
-use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\ORM\PaginatedList;
 use SilverStripe\Control\HTTPRequest;
-use SilverStripe\View\SSViewer;
+use SilverStripe\Subsites\Model\Subsite;
+use SilverStripe\CMS\Controllers\ContentController;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueProduct;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
-use \Page;
 
 
 /**
@@ -102,7 +104,7 @@ class CatalogueController extends ContentController
     {
         parent::init();
 
-        # Check for subsites and add support
+        // Check for subsites and add support
         if (class_exists(Subsite::class)) {
             $subsite = Subsite::currentSubsite();
 
@@ -116,7 +118,7 @@ class CatalogueController extends ContentController
         }
     }
 
-        /**
+    /**
      * The productimage action is used to determine the default image that will
      * appear related to a product
      *
