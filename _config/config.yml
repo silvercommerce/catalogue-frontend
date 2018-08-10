@@ -6,10 +6,10 @@ SilverStripe\Control\Controller:
     - SilverCommerce\CatalogueFrontend\Extensions\ControllerExtension
 SilverCommerce\CatalogueAdmin\Model\CatalogueProduct:
   extensions:
-    - SilverCommerce\CatalogueFrontend\Extensions\CatalogueLinkExtension
+    - SilverCommerce\CatalogueFrontend\Extensions\CatalogueExtension
 SilverCommerce\CatalogueAdmin\Model\CatalogueCategory:
   extensions:
-    - SilverCommerce\CatalogueFrontend\Extensions\CatalogueLinkExtension
+    - SilverCommerce\CatalogueFrontend\Extensions\CatalogueExtension
     - SilverCommerce\CatalogueFrontend\Extensions\CategoryExtension
 SilverCommerce\CatalogueAdmin\Model\ProductTag:
   extensions:

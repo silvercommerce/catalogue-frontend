@@ -2,24 +2,28 @@
 
 namespace SilverCommerce\CatalogueFrontend\Extensions;
 
-use SilverStripe\ORM\DataExtension;
-use SilverStripe\Forms\FieldList;
 use SilverStripe\Core\ClassInfo;
-use SilverStripe\Control\Controller;
-use SilverStripe\Control\Director;
-use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\Deprecation;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Control\Director;
+use SilverStripe\ORM\DataExtension;
+use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Control\Controller;
+use SilverStripe\Forms\TextareaField;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Forms\ToggleCompositeField;
 use SilverStripe\View\Parsers\URLSegmentFilter;
 use SilverStripe\CMS\Forms\SiteTreeURLSegmentField;
-use SilverStripe\CMS\Model\SiteTree;
-use SilverCommerce\CatalogueFrontend\Control\CatalogueController;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueProduct;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
+use SilverCommerce\CatalogueFrontend\Control\CatalogueController;
 
-class CatalogueLinkExtension extends DataExtension
+class CatalogueExtension extends DataExtension
 {
     private static $db = [
-        "URLSegment" => "Varchar"
+        "URLSegment" => "Varchar",
+        "MetaDescription" => "Text",
+        "ExtraMeta" => "HTMLFragment(['whitelist' => ['meta', 'link']])"
     ];
 
     public function updateRelativeLink(&$link, $action)
@@ -104,9 +108,12 @@ class CatalogueLinkExtension extends DataExtension
 
     public function updateCMSFields(FieldList $fields)
     {
+        $fields->removeByName("MetaDescription");
+        $fields->removeByName("ExtraMeta");
+
         $parent = null;
         $parent_link = null;
-        
+
         if ($this->owner instanceof CatalogueCategory) {
             $parent = $this
                 ->owner
@@ -141,6 +148,43 @@ class CatalogueLinkExtension extends DataExtension
             $url_field,
             $base_feild
         );
+
+        // Add meta info fields
+        $fields->addFieldToTab(
+            "Root.Main",
+            ToggleCompositeField::create(
+                'Metadata',
+                _t(__CLASS__.'.MetadataToggle', 'Metadata'),
+                [
+                    $metaFieldDesc = TextareaField::create(
+                        "MetaDescription",
+                        $this->owner->fieldLabel('MetaDescription')
+                    ),
+                    $metaFieldExtra = TextareaField::create(
+                        "ExtraMeta",
+                        $this->owner->fieldLabel('ExtraMeta')
+                    )
+                ]
+            )->setHeadingLevel(4)
+        );
+
+        // Help text for MetaData on page content editor
+        $metaFieldDesc
+            ->setRightTitle(
+                _t(
+                    'SilverStripe\\CMS\\Model\\SiteTree.METADESCHELP',
+                    "Search engines use this content for displaying search results (although it will not influence their ranking)."
+                )
+            )->addExtraClass('help');
+
+        $metaFieldExtra
+            ->setRightTitle(
+                _t(
+                    'SilverStripe\\CMS\\Model\\SiteTree.METAEXTRAHELP',
+                    "HTML tags for additional meta information. For example <meta name=\"customName\" content=\"your custom content here\" />"
+                )
+            )
+            ->addExtraClass('help');
     }
 
     /**
