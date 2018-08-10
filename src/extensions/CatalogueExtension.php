@@ -2,6 +2,7 @@
 
 namespace SilverCommerce\CatalogueFrontend\Extensions;
 
+use SilverStripe\View\HTML;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Dev\Deprecation;
 use SilverStripe\Forms\FieldList;
@@ -9,8 +10,11 @@ use SilverStripe\Control\Director;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\TextareaField;
+use SilverStripe\Security\Permission;
 use SilverStripe\Core\Injector\Injector;
+use SilverStripe\Control\ContentNegotiator;
 use SilverStripe\Forms\ToggleCompositeField;
 use SilverStripe\View\Parsers\URLSegmentFilter;
 use SilverStripe\CMS\Forms\SiteTreeURLSegmentField;
@@ -24,6 +28,10 @@ class CatalogueExtension extends DataExtension
         "URLSegment" => "Varchar",
         "MetaDescription" => "Text",
         "ExtraMeta" => "HTMLFragment(['whitelist' => ['meta', 'link']])"
+    ];
+
+    private static $casting = [
+        'MetaTags' => 'HTMLFragment'
     ];
 
     public function updateRelativeLink(&$link, $action)
@@ -224,6 +232,74 @@ class CatalogueExtension extends DataExtension
         }
 
         return $controller;
+    }
+
+    /**
+     * Return the title, description, keywords and language metatags.
+     * NOTE: Shamelessley taken from SiteTree
+     * 
+     * @param bool $includeTitle Show default <title>-tag, set to false for custom templating
+     *
+     * @return string The XHTML metatags
+     */
+    public function MetaTags($includeTitle = true)
+    {
+        $tags = [];
+        $owner = $this->getOwner();
+
+        if ($includeTitle && strtolower($includeTitle) != 'false') {
+            $tags[] = HTML::createTag(
+                'title',
+                [],
+                $owner->obj('Title')->forTemplate()
+            );
+        }
+
+        $generator = trim(Config::inst()->get(self::class, 'meta_generator'));
+        if (!empty($generator)) {
+            $tags[] = HTML::createTag('meta', array(
+                'name' => 'generator',
+                'content' => $generator,
+            ));
+        }
+
+        $charset = ContentNegotiator::config()->uninherited('encoding');
+        $tags[] = HTML::createTag('meta', array(
+            'http-equiv' => 'Content-Type',
+            'content' => 'text/html; charset=' . $charset,
+        ));
+        if ($owner->MetaDescription) {
+            $tags[] = HTML::createTag('meta', array(
+                'name' => 'description',
+                'content' => $owner->MetaDescription,
+            ));
+        }
+
+        if (Permission::check('CMS_ACCESS_CMSMain') && $owner->exists()) {
+            $tags[] = HTML::createTag(
+                'meta',
+                [
+                    'name' => 'x-page-id',
+                    'content' => $owner->obj('ID')->forTemplate()
+                ]
+            );
+            $tags[] = HTML::createTag(
+                'meta',
+                [
+                    'name' => 'x-cms-edit-link',
+                    'content' => $owner->obj('CMSEditLink')->forTemplate()
+                ]
+            );
+        }
+
+        $tags = implode("\n", $tags);
+        if ($owner->ExtraMeta) {
+            $tags .= $owner->obj('ExtraMeta')->forTemplate();
+        }
+
+        $owner->extend('updateMetaTags', $tags);
+
+        return $tags;
     }
 
     public function onBeforeWrite()
