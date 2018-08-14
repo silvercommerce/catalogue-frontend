@@ -12,7 +12,6 @@ use SilverStripe\Forms\NumericField;
 use SilverStripe\ORM\ValidationResult;
 use SilverStripe\Forms\RequiredFields;
 use SilverCommerce\OrdersAdmin\Model\LineItem;
-use SilverCommerce\ShoppingCart\Control\ShoppingCart;
 use SilverCommerce\QuantityField\Forms\QuantityField;
 use SilverCommerce\ShoppingCart\Forms\AddToCartForm;
 
