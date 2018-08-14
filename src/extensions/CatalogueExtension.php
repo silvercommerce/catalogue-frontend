@@ -8,6 +8,7 @@ use SilverStripe\Dev\Deprecation;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Control\Director;
 use SilverStripe\ORM\DataExtension;
+use SilverStripe\View\Requirements;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\Config\Config;
@@ -116,6 +117,11 @@ class CatalogueExtension extends DataExtension
 
     public function updateCMSFields(FieldList $fields)
     {
+        // Add CMS requirements for URL Segment Field
+        Requirements::javascript('silverstripe/cms: client/dist/js/bundle.js');
+        Requirements::css('silverstripe/cms: client/dist/styles/bundle.css');
+        Requirements::add_i18n_javascript('silverstripe/cms: client/lang', false, true);
+
         $fields->removeByName("MetaDescription");
         $fields->removeByName("ExtraMeta");
 
@@ -141,6 +147,10 @@ class CatalogueExtension extends DataExtension
             Director::absoluteBaseURL(),
             $parent_link
         );
+
+        if (substr(rtrim($baseLink), -1) != "/") { 
+            $baseLink = $baseLink . "/";
+        }
 
         $url_field = SiteTreeURLSegmentField::create("URLSegment", $this->owner->fieldLabel('URLSegment'))
             ->setURLPrefix($baseLink);
