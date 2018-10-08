@@ -55,8 +55,9 @@ class CatalogueController extends ContentController
         if (count($filter)) {
             $products = $products->filter($filter);
         }
+
         return PaginatedList::create(
-            $filter,
+            $products,
             $this->getRequest()
         )->setPageLength($limit);
     }
