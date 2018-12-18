@@ -159,14 +159,16 @@ class CatalogueController extends ContentController
             // look for a child category with this URLSegment
             $child = CatalogueCategory::get()->filter([
                 'ParentID' => $this->ID,
-                'URLSegment' => rawurlencode($action)
+                'URLSegment' => rawurlencode($action),
+                'Disabled' => 0
             ])->first();
 
             // Next check to see if the child os a product
             if (!$child) {
                 $child = CatalogueProduct::get()->filter([
                     "Categories.ID" => $this->ID,
-                    "URLSegment" => rawurldecode($action)
+                    "URLSegment" => rawurldecode($action),
+                    'Disabled' => 0
                 ])->first();
             }
 
