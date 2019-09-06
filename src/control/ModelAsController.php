@@ -12,7 +12,6 @@ use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
 /**
  * Customise default @link ModelAsController to allow for finding and setting
  * of catalogue categories or products.
- * 
  */
 class ModelAsController extends CMSModelAsController
 {
@@ -21,8 +20,8 @@ class ModelAsController extends CMSModelAsController
      * {@link CatalogueProductController} for handling the relevent
      * object.
      *
-     * @param $object A {@link DataObject} with the getControllerName() method
-     * @param string $action
+     * @param  $object A {@link DataObject} with the getControllerName() method
+     * @param  string                                                          $action
      * @return CatalogueController
      */
     public static function controller_for_object($object, $action = null)

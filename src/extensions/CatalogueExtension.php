@@ -261,22 +261,28 @@ class CatalogueExtension extends DataExtension
 
         $generator = trim(Config::inst()->get(self::class, 'meta_generator'));
         if (!empty($generator)) {
-            $tags[] = HTML::createTag('meta', array(
+            $tags[] = HTML::createTag(
+                'meta', array(
                 'name' => 'generator',
                 'content' => $generator,
-            ));
+                )
+            );
         }
 
         $charset = ContentNegotiator::config()->uninherited('encoding');
-        $tags[] = HTML::createTag('meta', array(
+        $tags[] = HTML::createTag(
+            'meta', array(
             'http-equiv' => 'Content-Type',
             'content' => 'text/html; charset=' . $charset,
-        ));
+            )
+        );
         if ($owner->MetaDescription) {
-            $tags[] = HTML::createTag('meta', array(
+            $tags[] = HTML::createTag(
+                'meta', array(
                 'name' => 'description',
                 'content' => $owner->MetaDescription,
-            ));
+                )
+            );
         }
 
         if (Permission::check('CMS_ACCESS_CMSMain') && $owner->exists()) {

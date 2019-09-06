@@ -12,7 +12,7 @@ use SilverCommerce\CatalogueAdmin\Helpers\Helper;
  * Simple extension to category to add image support. This is mostly
  * for use in templates.
  * 
- * @package CatalogueFrontend
+ * @package    CatalogueFrontend
  * @subpackage Extensions
  */
 class CategoryExtension extends DataExtension
@@ -54,7 +54,6 @@ class CategoryExtension extends DataExtension
 
     /**
      * Add the image upload field to the admin fields.
-     * 
      */
     public function updateCMSFields(FieldList $fields)
     {

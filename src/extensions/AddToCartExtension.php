@@ -19,7 +19,7 @@ use SilverCommerce\ShoppingCart\Forms\AddToCartForm;
  * Add an add to cart form that generates a {@link LineItem} for
  * this object and then adds it to the shopping cart 
  *
- * @author i-lateral (http://www.i-lateral.com)
+ * @author  i-lateral (http://www.i-lateral.com)
  * @package cataloge-frontend
  */
 class AddToCartExtension extends Extension

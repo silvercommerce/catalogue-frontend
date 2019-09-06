@@ -10,7 +10,7 @@ use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
  * Extension for Controller that provide additional methods to all
  * templates 
  *
- * @author i-lateral (http://www.i-lateral.com)
+ * @author  i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
 class ControllerExtension extends Extension
@@ -26,10 +26,12 @@ class ControllerExtension extends Extension
     public function CatalogueCategories($ParentID = 0)
     {
         return CatalogueCategory::get()
-            ->filter([
+            ->filter(
+                [
                 "ParentID" => $ParentID,
                 "Disabled" => 0
-            ]);
+                ]
+            );
     }
 
     /**
@@ -46,9 +48,11 @@ class ControllerExtension extends Extension
         return $this
             ->owner
             ->CatalogueCategories()
-            ->filterByCallback(function($item, $list) {
-                return $item->canView();
-            });
+            ->filterByCallback(
+                function ($item, $list) {
+                    return $item->canView();
+                }
+            );
     }
 
     /**
@@ -59,9 +63,11 @@ class ControllerExtension extends Extension
     public function CatalogueProducts($ParentCategoryID = 0)
     {
         return CatalogueProduct::get()
-            ->filter([
+            ->filter(
+                [
                 "ParentID" => $ParentCategoryID,
                 "Disabled" => 0
-            ]);
+                ]
+            );
     }
 }

@@ -17,7 +17,7 @@ use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
 /**
  * Controller used to render pages in the catalogue (either categories or pages)
  *
- * @author i-lateral (http://www.i-lateral.com)
+ * @author  i-lateral (http://www.i-lateral.com)
  * @package catalogue
  */
 class CatalogueController extends ContentController
@@ -138,13 +138,15 @@ class CatalogueController extends ContentController
      * This acts the same as {@link Controller::handleRequest()}, but if an action cannot be found this will attempt to
      * fall over to a child controller in order to provide functionality for nested URLs.
      *
-     * @param HTTPRequest $request
+     * @param  HTTPRequest $request
      * @return HTTPResponse
      * @throws HTTPResponse_Exception
      */
     public function handleRequest(HTTPRequest $request)
     {
-        /** @var SiteTree $child */
+        /**
+ * @var SiteTree $child 
+*/
         $child  = null;
         $action = $request->param('Action');
 
@@ -157,19 +159,23 @@ class CatalogueController extends ContentController
                 Translatable::disable_locale_filter();
             }
             // look for a child category with this URLSegment
-            $child = CatalogueCategory::get()->filter([
+            $child = CatalogueCategory::get()->filter(
+                [
                 'ParentID' => $this->ID,
                 'URLSegment' => rawurlencode($action),
                 'Disabled' => 0
-            ])->first();
+                ]
+            )->first();
 
             // Next check to see if the child os a product
             if (!$child) {
-                $child = CatalogueProduct::get()->filter([
+                $child = CatalogueProduct::get()->filter(
+                    [
                     "Categories.ID" => $this->ID,
                     "URLSegment" => rawurldecode($action),
                     'Disabled' => 0
-                ])->first();
+                    ]
+                )->first();
             }
 
             if (class_exists('Translatable')) {
@@ -225,7 +231,7 @@ class CatalogueController extends ContentController
      * Overwrite default SSViewer call to get a custom
      * template list
      *
-     * @param $action string
+     * @param  $action string
      * @return SSViewer
      */
     public function getViewer($action)
@@ -262,14 +268,17 @@ class CatalogueController extends ContentController
     
     /**
      * Returns a fixed navigation menu of the given level.
+     *
      * @return SS_List
      */
     public function CategoryMenu($level = 1)
     {
         if ($level == 1) {
-            $result = CatalogueCategory::get()->filter(array(
+            $result = CatalogueCategory::get()->filter(
+                array(
                 "ParentID" => 0
-            ));
+                )
+            );
         } else {
             $parent = $this->data();
             $stack = array($parent);
