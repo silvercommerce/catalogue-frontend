@@ -1,6 +1,8 @@
 Silverstripe Catalogue
 ======================
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/silvercommerce/catalogue-frontend/badges/quality-score.png?b=1.0)](https://scrutinizer-ci.com/g/silvercommerce/catalogue-frontend/?branch=1.0)
+
 Provides a URL routing for Categories and Products (provided by the Catalogue Admin module).
 
 This module allows for:
