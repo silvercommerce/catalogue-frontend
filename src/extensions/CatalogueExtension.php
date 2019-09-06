@@ -152,19 +152,13 @@ class CatalogueExtension extends DataExtension
             $baseLink = $baseLink . "/";
         }
 
-        $url_field = SiteTreeURLSegmentField::create("URLSegment", $this->owner->fieldLabel('URLSegment'))
-            ->setURLPrefix($baseLink);
-        
-        if ($fields->dataFieldByName("BasePrice")) {
-            $base_feild = "BasePrice";
-        } else {
-            $base_feild = "Content";
-        }
-
         $fields->addFieldToTab(
             "Root.Main",
-            $url_field,
-            $base_feild
+            SiteTreeURLSegmentField::create(
+                "URLSegment",
+                $this->owner->fieldLabel('URLSegment')
+            )->setURLPrefix($baseLink),
+            'Content'
         );
 
         // Add meta info fields
