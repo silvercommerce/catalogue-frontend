@@ -30,7 +30,7 @@ class CatalogueController extends ContentController
      */
     public function getFilter()
     {
-        $filter = [];
+        $filter = ['Disabled' => 0];
         $tag = $this->getRequest()->getVar("t");
 
         if ($tag) {
