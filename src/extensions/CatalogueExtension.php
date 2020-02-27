@@ -333,4 +333,16 @@ class CatalogueExtension extends DataExtension
             $this->owner->URLSegment = ($count) ? $t . '-' . ($count + 1) : $t;
         }
     }
+    
+    /**
+     * Hides disabled products from googlesitemaps
+     * Only called if googlesitemaps module is installed
+     *
+     * @param [type] $can
+     * @return bool
+     */
+    public function alterCanIncludeInGoogleSitemap(&$can) 
+    {
+        return !$this->Disabled;
+    }
 }
