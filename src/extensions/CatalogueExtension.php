@@ -343,6 +343,6 @@ class CatalogueExtension extends DataExtension
      */
     public function alterCanIncludeInGoogleSitemap(&$can) 
     {
-        return !$this->Disabled;
+        return !$this->getOwner()->Disabled;
     }
 }
