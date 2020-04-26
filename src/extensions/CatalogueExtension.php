@@ -14,6 +14,7 @@ use SilverStripe\Control\Controller;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\ToggleCompositeField;
 use SilverStripe\View\Parsers\URLSegmentFilter;
+use SilverStripe\CMS\Controllers\ContentController;
 use SilverStripe\CMS\Forms\SiteTreeURLSegmentField;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueProduct;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
@@ -272,5 +273,17 @@ class CatalogueExtension extends DataExtension
                 ->getOwner()
                 ->generateURLSegment($this->getOwner()->Title);
         }
+    }
+    
+    /**
+     * Hides disabled products from googlesitemaps
+     * Only called if googlesitemaps module is installed
+     *
+     * @param [type] $can
+     * @return bool
+     */
+    public function alterCanIncludeInGoogleSitemap(&$can)
+    {
+        return !$this->getOwner()->Disabled;
     }
 }
