@@ -11,3 +11,7 @@
 ## 1.0.2
 
 * Add support for SEO module being installed
+
+## 1.0.3
+
+* Add additional fields to product export

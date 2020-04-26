@@ -19,6 +19,7 @@ use SilverStripe\CMS\Forms\SiteTreeURLSegmentField;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueProduct;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
 use SilverCommerce\CatalogueFrontend\Control\CatalogueController;
+use SilverStripe\Core\Manifest\ModuleLoader;
 
 class CatalogueExtension extends DataExtension
 {
@@ -31,6 +32,25 @@ class CatalogueExtension extends DataExtension
     private static $casting = [
         'MetaTags' => 'HTMLFragment'
     ];
+
+    /**
+     * Add extra fields to export (including SEO )
+     *
+     * @return array
+     */
+    public function updateExportFields(&$fields)
+    {
+        $fields['URLSegment'] = 'URLSegment';
+        $fields['MetaDescription'] = 'MetaDescription';
+        $fields['ExtraMeta'] = 'ExtraMeta';
+        
+        $manifest = ModuleLoader::inst()->getManifest();
+        
+        // If SEO module installed, add extra SEO subject field
+        if ($manifest->moduleExists('hubertusanton/silverstripe-seo')) {
+            $fields['SEOPageSubject'] = 'SEOPageSubject';
+        }
+    }
 
     public function updateRelativeLink(&$link, $action)
     {
