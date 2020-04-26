@@ -4,15 +4,18 @@ namespace SilverCommerce\CatalogueFrontend\Control;
 
 use \Page;
 use SilverStripe\i18n\i18n;
+use SilverStripe\View\HTML;
 use SilverStripe\View\SSViewer;
 use SilverStripe\Control\Director;
 use SilverStripe\ORM\PaginatedList;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Security\Permission;
 use SilverStripe\Subsites\Model\Subsite;
+use SilverStripe\Control\ContentNegotiator;
 use SilverStripe\CMS\Controllers\ContentController;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueProduct;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
-
 
 /**
  * Controller used to render pages in the catalogue (either categories or pages)
@@ -25,7 +28,7 @@ class CatalogueController extends ContentController
 
     /**
      * Find a filter from the URL that we can apply to the products list
-     * 
+     *
      * @return array
      */
     public function getFilter()
@@ -88,7 +91,7 @@ class CatalogueController extends ContentController
      * and use that to look up a record.
      */
     public function __construct($dataRecord = null)
-    {   
+    {
         if (!$dataRecord) {
             $dataRecord = new CatalogueCategory();
             if ($this->hasMethod("Title")) {
@@ -135,6 +138,82 @@ class CatalogueController extends ContentController
     }
 
     /**
+     * Return the title, description, keywords and language metatags.
+     * NOTE: Shamelessley taken from SiteTree
+     *
+     * @param bool $includeTitle Show default <title>-tag, set to false for custom templating
+     *
+     * @return string The XHTML metatags
+     */
+    public function MetaTags($includeTitle = true)
+    {
+        $tags = [];
+
+        if ($includeTitle && strtolower($includeTitle) != 'false') {
+            $tags[] = HTML::createTag(
+                'title',
+                [],
+                $this->obj('Title')->forTemplate()
+            );
+        }
+
+        $generator = trim(Config::inst()->get(self::class, 'meta_generator'));
+        if (!empty($generator)) {
+            $tags[] = HTML::createTag(
+                'meta',
+                [
+                    'name' => 'generator',
+                    'content' => $generator,
+                ]
+            );
+        }
+
+        $charset = ContentNegotiator::config()->uninherited('encoding');
+        $tags[] = HTML::createTag(
+            'meta',
+            [
+                'http-equiv' => 'Content-Type',
+                'content' => 'text/html; charset=' . $charset,
+            ]
+        );
+        if ($this->MetaDescription) {
+            $tags[] = HTML::createTag(
+                'meta',
+                [
+                    'name' => 'description',
+                    'content' => $this->MetaDescription,
+                ]
+            );
+        }
+
+        if (Permission::check('CMS_ACCESS_CMSMain') && $this->exists()) {
+            $tags[] = HTML::createTag(
+                'meta',
+                [
+                    'name' => 'x-page-id',
+                    'content' => $this->obj('ID')->forTemplate()
+                ]
+            );
+            $tags[] = HTML::createTag(
+                'meta',
+                [
+                    'name' => 'x-cms-edit-link',
+                    'content' => $this->obj('CMSEditLink')->forTemplate()
+                ]
+            );
+        }
+
+        $tags = implode("\n", $tags);
+        if ($this->ExtraMeta) {
+            $tags .= $this->obj('ExtraMeta')->forTemplate();
+        }
+
+        $this->dataRecord->extend('MetaTags', $tags);
+
+        return $tags;
+    }
+
+    /**
      * This acts the same as {@link Controller::handleRequest()}, but if an action cannot be found this will attempt to
      * fall over to a child controller in order to provide functionality for nested URLs.
      *
@@ -145,8 +224,8 @@ class CatalogueController extends ContentController
     public function handleRequest(HTTPRequest $request)
     {
         /**
- * @var SiteTree $child 
-*/
+         * @var SiteTree $child
+        */
         $child  = null;
         $action = $request->param('Action');
 

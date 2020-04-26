@@ -11,11 +11,7 @@ use SilverStripe\ORM\DataExtension;
 use SilverStripe\View\Requirements;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\TextareaField;
-use SilverStripe\Security\Permission;
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\Control\ContentNegotiator;
 use SilverStripe\Forms\ToggleCompositeField;
 use SilverStripe\View\Parsers\URLSegmentFilter;
 use SilverStripe\CMS\Forms\SiteTreeURLSegmentField;
@@ -44,12 +40,12 @@ class CatalogueExtension extends DataExtension
                 $parent->RelativeLink(),
                 $this->owner->URLSegment,
                 $action
-            ); 
+            );
         } else {
             $link = Controller::join_links(
                 $this->owner->URLSegment,
                 $action
-            ); 
+            );
         }
     }
 
@@ -148,7 +144,7 @@ class CatalogueExtension extends DataExtension
             $parent_link
         );
 
-        if (substr(rtrim($baseLink), -1) != "/") { 
+        if (substr(rtrim($baseLink), -1) != "/") {
             $baseLink = $baseLink . "/";
         }
 
@@ -239,98 +235,42 @@ class CatalogueExtension extends DataExtension
     }
 
     /**
-     * Return the title, description, keywords and language metatags.
-     * NOTE: Shamelessley taken from SiteTree
-     * 
-     * @param bool $includeTitle Show default <title>-tag, set to false for custom templating
+     * Generate a URL segment based on the title provided.
      *
-     * @return string The XHTML metatags
+     * @param string $title Page title
+     *
+     * @return string Generated url segment
      */
-    public function MetaTags($includeTitle = true)
+    public function generateURLSegment($title)
     {
-        $tags = [];
-        $owner = $this->getOwner();
+        $filter = URLSegmentFilter::create();
+        $t = $filter->filter($title);
 
-        if ($includeTitle && strtolower($includeTitle) != 'false') {
-            $tags[] = HTML::createTag(
-                'title',
-                [],
-                $owner->obj('Title')->forTemplate()
-            );
+        // Fallback to generic name if path is empty (= no valid, convertable characters)
+        if (!$t || $t == '-' || $t == '-1') {
+            $t = "{$this->owner->ID}";
         }
 
-        $generator = trim(Config::inst()->get(self::class, 'meta_generator'));
-        if (!empty($generator)) {
-            $tags[] = HTML::createTag(
-                'meta', array(
-                'name' => 'generator',
-                'content' => $generator,
-                )
-            );
-        }
+        // Ensure that this object has a non-conflicting URLSegment value.
+        $existing_cats = CatalogueCategory::get()->filter('URLSegment', $t)->count();
+        $existing_products = CatalogueProduct::get()->filter('URLSegment', $t)->count();
+        $existing_pages = SiteTree::get()->filter('URLSegment', $t)->count();
+        $count = (int)$existing_cats + (int)$existing_products + (int)$existing_pages;
+        $t = ($count) ? $t . '-' . ($count + 1) : $t;
 
-        $charset = ContentNegotiator::config()->uninherited('encoding');
-        $tags[] = HTML::createTag(
-            'meta', array(
-            'http-equiv' => 'Content-Type',
-            'content' => 'text/html; charset=' . $charset,
-            )
-        );
-        if ($owner->MetaDescription) {
-            $tags[] = HTML::createTag(
-                'meta', array(
-                'name' => 'description',
-                'content' => $owner->MetaDescription,
-                )
-            );
-        }
+        // Hook for extensions
+        $this->getOwner()->extend('updateURLSegment', $t, $title);
 
-        if (Permission::check('CMS_ACCESS_CMSMain') && $owner->exists()) {
-            $tags[] = HTML::createTag(
-                'meta',
-                [
-                    'name' => 'x-page-id',
-                    'content' => $owner->obj('ID')->forTemplate()
-                ]
-            );
-            $tags[] = HTML::createTag(
-                'meta',
-                [
-                    'name' => 'x-cms-edit-link',
-                    'content' => $owner->obj('CMSEditLink')->forTemplate()
-                ]
-            );
-        }
-
-        $tags = implode("\n", $tags);
-        if ($owner->ExtraMeta) {
-            $tags .= $owner->obj('ExtraMeta')->forTemplate();
-        }
-
-        $owner->extend('updateMetaTags', $tags);
-
-        return $tags;
+        return $t;
     }
 
     public function onBeforeWrite()
     {
         // Only call on first creation, ir if title is changed
-        if ($this->owner->isChanged('Title') || !$this->owner->URLSegment) {
-            // Set the URL Segment, so it can be accessed via the controller
-            $filter = URLSegmentFilter::create();
-            $t = $filter->filter($this->owner->Title);
-
-            // Fallback to generic name if path is empty (= no valid, convertable characters)
-            if (!$t || $t == '-' || $t == '-1') {
-                $t = "{$this->owner->ID}";
-            }
-
-            // Ensure that this object has a non-conflicting URLSegment value.
-            $existing_cats = CatalogueCategory::get()->filter('URLSegment', $t)->count();
-            $existing_products = CatalogueProduct::get()->filter('URLSegment', $t)->count();
-            $existing_pages = SiteTree::get()->filter('URLSegment', $t)->count();
-            $count = (int)$existing_cats + (int)$existing_products + (int)$existing_pages;
-            $this->owner->URLSegment = ($count) ? $t . '-' . ($count + 1) : $t;
+        if ($this->getOwner()->isChanged('Title') || !$this->getOwner()->URLSegment) {
+            $this->getOwner()->URLSegment = $this
+                ->getOwner()
+                ->generateURLSegment($this->getOwner()->Title);
         }
     }
 }
