@@ -1,5 +1,7 @@
 ---
 Name: cataloguefrontendconfig
+After:
+  - '#catalogueconfig'
 ---
 SilverStripe\Control\Controller:
   extensions:
@@ -21,3 +23,15 @@ Only:
 SilverCommerce\CatalogueFrontend\Control\CatalogueController:
   extensions:
     - SilverCommerce\CatalogueFrontend\Extensions\AddToCartExtension
+
+---
+Only:
+  moduleexists: 'hubertusanton/silverstripe-seo'
+---
+# Automatically add SEO extensions to categorys and products if installed 
+SilverCommerce\CatalogueAdmin\Model\CatalogueProduct:
+  extensions:
+    - Hubertusanton\SilverStripeSeo\SeoObjectExtension
+SilverCommerce\CatalogueAdmin\Model\CatalogueCategory:
+  extensions:
+    - Hubertusanton\SilverStripeSeo\SeoObjectExtension
