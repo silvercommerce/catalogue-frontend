@@ -11,8 +11,10 @@ use SilverStripe\ORM\PaginatedList;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Security\Permission;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Subsites\Model\Subsite;
 use SilverStripe\Control\ContentNegotiator;
+use SilverStripe\Control\HTTPResponse_Exception;
 use SilverStripe\CMS\Controllers\ContentController;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueProduct;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
@@ -233,10 +235,6 @@ class CatalogueController extends ContentController
         // control to a child controller. This allows for the creation of chains of controllers which correspond to a
         // nested URL.
         if ($action && !$this->hasAction($action)) {
-            // See ModelAdController->getNestedController() for similar logic
-            if (class_exists('Translatable')) {
-                Translatable::disable_locale_filter();
-            }
             // look for a child category with this URLSegment
             $child = CatalogueCategory::get()->filter(
                 [
@@ -255,10 +253,6 @@ class CatalogueController extends ContentController
                     'Disabled' => 0
                     ]
                 )->first();
-            }
-
-            if (class_exists('Translatable')) {
-                Translatable::enable_locale_filter();
             }
         }
 
