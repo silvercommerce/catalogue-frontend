@@ -15,3 +15,7 @@
 ## 1.0.3
 
 * Add additional fields to product export
+
+## 1.0.4
+
+* Minor code cleanup
