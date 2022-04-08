@@ -1,0 +1,3 @@
+mappings:
+  CatalogueCategoryController: SilverCommerce\CatalogueFrontend\Control\CatalogueController
+  CatalogueProductController: SilverCommerce\CatalogueFrontend\Control\CatalogueController
