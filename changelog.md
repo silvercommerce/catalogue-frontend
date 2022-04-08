@@ -19,3 +19,7 @@
 ## 1.0.4
 
 * Minor code cleanup
+
+## 1.0.5
+
+* Add upgrade from previous SS Commerce
