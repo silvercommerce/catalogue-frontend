@@ -23,3 +23,8 @@
 ## 1.0.5
 
 * Add upgrade from previous SS Commerce
+
+## 1.1.0
+
+* Bring inline with versioned products
+* Code tidy
