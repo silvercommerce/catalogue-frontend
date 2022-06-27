@@ -20,13 +20,14 @@ use SilverCommerce\CatalogueAdmin\Model\CatalogueProduct;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
 use SilverCommerce\CatalogueFrontend\Control\CatalogueController;
 use SilverStripe\Core\Manifest\ModuleLoader;
+use SilverStripe\ORM\ArrayList;
 
 class CatalogueExtension extends DataExtension
 {
     private static $db = [
-        "URLSegment" => "Varchar",
-        "MetaDescription" => "Text",
-        "ExtraMeta" => "HTMLFragment(['whitelist' => ['meta', 'link']])"
+        'URLSegment' => 'Varchar',
+        'MetaDescription' => 'Text',
+        'ExtraMeta' => "HTMLFragment(['whitelist' => ['meta', 'link']])"
     ];
 
     private static $casting = [

@@ -1,6 +1,12 @@
 ---
 Name: catalogueinjector
+After:
+  - '#cataloguefrontendconfig'
 ---
 SilverStripe\Core\Injector\Injector:
   SilverStripe\CMS\Controllers\ModelAsController:
     class: SilverCommerce\CatalogueFrontend\Control\ModelAsController
+  SilverCommerce\CatalogueAdmin\Forms\GridField\GridFieldConfig_Catalogue:
+    class: SilverCommerce\CatalogueFrontend\Forms\GridField\PublishableCatalogueConfig
+  SilverCommerce\CatalogueAdmin\Forms\GridField\GridFieldConfig_CatalogueRelated:
+    class: SilverCommerce\CatalogueFrontend\Forms\GridField\PublishableCatalogueConfigRelated
