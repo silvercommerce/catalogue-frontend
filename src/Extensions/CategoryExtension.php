@@ -5,8 +5,11 @@ namespace SilverCommerce\CatalogueFrontend\Extensions;
 use SilverStripe\Assets\Image;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\ORM\DataExtension;
+use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\AssetAdmin\Forms\UploadField;
 use SilverCommerce\CatalogueAdmin\Helpers\Helper;
+use SilverCommerce\CatalogueFrontend\Tasks\CatalogueFrontendMigrationTask;
 
 /**
  * Simple extension to category to add image support. This is mostly
@@ -50,6 +53,16 @@ class CategoryExtension extends DataExtension
 
         // Finally generate our no product image
         return Helper::generate_no_image();
+    }
+
+    public function requireDefaultRecords()
+    {
+        $run_migration = CatalogueFrontendMigrationTask::config()->run_during_dev_build;
+
+        if ($run_migration) {
+            $request = Injector::inst()->get(HTTPRequest::class);
+            CatalogueFrontendMigrationTask::create()->run($request);
+        }
     }
 
     /**
