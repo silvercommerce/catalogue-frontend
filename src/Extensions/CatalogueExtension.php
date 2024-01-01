@@ -265,34 +265,42 @@ class CatalogueExtension extends DataExtension
      */
     public function generateURLSegment($title)
     {
+        $owner = $this->getOwner();
         $filter = URLSegmentFilter::create();
         $t = $filter->filter($title);
 
         // Fallback to generic name if path is empty (= no valid, convertable characters)
         if (!$t || $t == '-' || $t == '-1') {
-            $t = "{$this->owner->ID}";
+            $t = "{$owner->ID}";
         }
 
         // Ensure that this object has a non-conflicting URLSegment value.
-        $existing_cats = CatalogueCategory::get()->filter('URLSegment', $t)->count();
-        $existing_products = CatalogueProduct::get()->filter('URLSegment', $t)->count();
-        $existing_pages = SiteTree::get()->filter('URLSegment', $t)->count();
+        $existing_cats = CatalogueCategory::get()
+            ->filter('URLSegment', $t)
+            ->count();
+        $existing_products = CatalogueProduct::get()
+            ->filter('URLSegment', $t)
+            ->count();
+        $existing_pages = SiteTree::get()
+            ->filter('URLSegment', $t)
+            ->count();
+
         $count = (int)$existing_cats + (int)$existing_products + (int)$existing_pages;
         $t = ($count) ? $t . '-' . ($count + 1) : $t;
 
         // Hook for extensions
-        $this->getOwner()->extend('updateURLSegment', $t, $title);
+        $owner->extend('updateURLSegment', $t, $title);
 
         return $t;
     }
 
     public function onBeforeWrite()
     {
-        // Only call on first creation, ir if title is changed
-        if ($this->getOwner()->isChanged('Title') || !$this->getOwner()->URLSegment) {
-            $this->getOwner()->URLSegment = $this
-                ->getOwner()
-                ->generateURLSegment($this->getOwner()->Title);
+        $owner = $this->getOwner();
+
+        if (empty($owner->URLSegment)) {
+            $segment = $owner->generateURLSegment($owner->Title);
+            $owner->URLSegment = $segment;
         }
     }
     
