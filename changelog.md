@@ -28,3 +28,7 @@
 
 * Bring inline with versioned products
 * Code tidy
+
+## 1.2.0
+
+* SS5 port of 1.1.*
