@@ -2,6 +2,7 @@
 
 namespace SilverCommerce\CatalogueFrontend\Control;
 
+use LogicException;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\ORM\DataObject;
@@ -24,8 +25,12 @@ class ModelAsController extends CMSModelAsController
      * @param  string                                                          $action
      * @return CatalogueController
      */
-    public static function controller_for_object($object, $action = null)
+    public static function controller_for_object($object, $action = null): CatalogueController
     {
+        if (method_exists($object, 'getControllerName')) {
+            throw new LogicException('Passed object has no Controller');
+        }
+
         $controller = $object->getControllerName();
 
         if ($action && class_exists($controller . '_' . ucfirst($action))) {
@@ -39,7 +44,7 @@ class ModelAsController extends CMSModelAsController
      * @return ContentController
      * @throws Exception If URLSegment not passed in as a request parameter.
      */
-    public function getNestedController()
+    public function getNestedController(): ContentController
     {
         $request = $this->getRequest();
 

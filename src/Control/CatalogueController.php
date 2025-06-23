@@ -19,21 +19,16 @@ use SilverStripe\CMS\Controllers\ContentController;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueProduct;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
 
-/**
- * Controller used to render pages in the catalogue (either categories or pages)
- *
- * @author  i-lateral (http://www.i-lateral.com)
- * @package catalogue
- */
 class CatalogueController extends ContentController
 {
 
     /**
-     * Find a filter from the URL that we can apply to the products list
+     * Find a filter from the URL that we can apply to
+     * the products list
      *
      * @return array
      */
-    public function getFilter()
+    public function getFilter(): array
     {
         $filter = ['Disabled' => 0];
         $tag = $this->getRequest()->getVar("t");
@@ -46,13 +41,8 @@ class CatalogueController extends ContentController
 
         return $filter;
     }
-    
-    /**
-     * Get a paginated list of products contained in this category
-     *
-     * @return PaginatedList
-     */
-    public function PaginatedProducts($limit = 10)
+
+    public function PaginatedProducts($limit = 10): PaginatedList
     {
         $products = $this->SortedProducts();
         $filter = $this->getFilter();
@@ -67,13 +57,7 @@ class CatalogueController extends ContentController
         )->setPageLength($limit);
     }
 
-
-    /**
-     * Get a paginated list of all products at this level and below
-     *
-     * @return PaginatedList
-     */
-    public function PaginatedAllProducts($limit = 10)
+    public function PaginatedAllProducts($limit = 10): PaginatedList
     {
         $products = $this->AllProducts();
         $filter = $this->getFilter();
@@ -130,11 +114,16 @@ class CatalogueController extends ContentController
      *
      * @return Image
      */
-    public function ProductImage()
+    public function ProductImage(): Image
     {
-        $image = $this->SortedImages()->first();
+        $image = $this
+            ->SortedImages()
+            ->first();
             
-        $this->extend("updateProductImage", $image);
+        $this->extend(
+            "updateProductImage",
+            $image
+        );
 
         return $image;
     }
