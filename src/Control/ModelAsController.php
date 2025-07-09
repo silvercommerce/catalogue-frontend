@@ -2,13 +2,14 @@
 
 namespace SilverCommerce\CatalogueFrontend\Control;
 
+use Exception;
 use LogicException;
-use SilverStripe\Core\ClassInfo;
-use SilverStripe\Core\Injector\Injector;
-use SilverStripe\ORM\DataObject;
+use SilverStripe\Dev\Debug;
 use SilverStripe\CMS\Model\SiteTree;
-use SilverStripe\CMS\Controllers\ModelAsController as CMSModelAsController;
+use SilverStripe\Core\Injector\Injector;
+use SilverStripe\CMS\Controllers\ContentController;
 use SilverCommerce\CatalogueAdmin\Model\CatalogueCategory;
+use SilverStripe\CMS\Controllers\ModelAsController as CMSModelAsController;
 
 /**
  * Customise default @link ModelAsController to allow for finding and setting
@@ -23,14 +24,10 @@ class ModelAsController extends CMSModelAsController
      *
      * @param  $object A {@link DataObject} with the getControllerName() method
      * @param  string                                                          $action
-     * @return CatalogueController
+     * @return ContentController
      */
-    public static function controller_for_object($object, $action = null): CatalogueController
+    public static function controller_for_object($object, $action = null): ContentController
     {
-        if (method_exists($object, 'getControllerName')) {
-            throw new LogicException('Passed object has no Controller');
-        }
-
         $controller = $object->getControllerName();
 
         if ($action && class_exists($controller . '_' . ucfirst($action))) {
@@ -60,7 +57,6 @@ class ModelAsController extends CMSModelAsController
         // Select child page
         $sitetree_conditions = ["URLSegment" => rawurlencode($URLSegment)];
         $cat_conditions = $sitetree_conditions;
-        $product_conditions = $sitetree_conditions;
         
         if (SiteTree::config()->get('nested_urls')) {
             $sitetree_conditions['ParentID'] = 0;

@@ -148,7 +148,15 @@ class CatalogueController extends ContentController
             );
         }
 
-        $generator = trim(Config::inst()->get(self::class, 'meta_generator'));
+        $generator = Config::inst()->get(
+            self::class,
+            'meta_generator'
+        );
+
+        if (!empty($generator)) {
+            $generator = trim($generator);
+        }
+
         if (!empty($generator)) {
             $tags[] = HTML::createTag(
                 'meta',
@@ -212,7 +220,7 @@ class CatalogueController extends ContentController
      * @return HTTPResponse
      * @throws HTTPResponse_Exception
      */
-    public function handleRequest(HTTPRequest $request)
+    public function handleRequest(HTTPRequest $request): HTTPResponse
     {
         /**
          * @var SiteTree $child
